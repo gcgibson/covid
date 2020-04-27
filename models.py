@@ -144,9 +144,9 @@ def SEIR_dynamics(T, params, x0, obs=None, death=None, suffix=""):
     
     beta0, sigma, gamma, rw_scale, drift, \
     det_prob, det_noise_scale, death_prob, death_rate, det_prob_d  = params
-
+    
     beta = numpyro.sample("beta" + suffix,
-                  ExponentialRandomWalk(loc=beta0, scale=rw_scale, drift=drift, num_steps=T-1))
+                  ExponentialRandomWalk(loc=beta0, scale=rw_scale, drift= drift, num_steps=T-1))
 
     # Run ODE
     x = SEIRModel.run(T, x0, (beta, sigma, gamma, death_prob, death_rate))
@@ -222,7 +222,8 @@ def SEIR_stochastic(T = 50,
                                           (1-.1) * 100))
     
     if drift_scale is not None:
-        drift = numpyro.sample("drift", dist.Normal(loc=0, scale=drift_scale))
+        drift = numpyro.sample("drift", dist.Normal(loc=np.log(.5), scale=.01))
+        drift = -np.exp(drift)
     else:
         drift = 0
         

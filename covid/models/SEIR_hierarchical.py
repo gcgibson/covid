@@ -87,7 +87,7 @@ def SEIR_hierarchical(data = None,
     '''Generate R0'''
     ## TODO: forecasting with splines not yet supported b/c patsy will not evaluate
     ## splines outside of the outermost knots. Look into workaround/fix for this
-    R0_glm = GLM("1 + C(state, OneHot) + state_of_emergency + shelter_in_place + Q('non-contact_school') + standardize(popdensity) + state : cr(t, df=3)", 
+    R0_glm = GLM("1 + C(state, OneHot)  + shelter_in_place  +standardize(popdensity) ", 
                  data, 
                  log_link,
                  partial(Gamma, var=0.1),
@@ -134,8 +134,15 @@ def SEIR_hierarchical(data = None,
     det_rate = det_rate
     sigma = 1/E_duration
     gamma = 1/I_duration
-    beta = R0 * gamma[:,None]
-    
+    beta0 = R0 * gamma[:,None]
+    print (beta0.shape)
+    #with numpyro.plate("places", num_places):
+    betas1 = numpyro.sample("beta1" ,
+                      ExponentialRandomWalk(loc=beta0[0,:], scale=1e-2, drift=0, num_steps=T))
+    betas2 = numpyro.sample("beta2" ,
+                      ExponentialRandomWalk(loc=beta0[1,:], scale=1e-2, drift=0, num_steps=T))
+    beta = np.concatenate((betas1,betas2),axis=0).reshape(num_places,-1)
+    print (beta.shape)
     #beta = beta[:,:-1] # truncate to T-1 timesteps (transitions)
     
     with numpyro.plate("num_places", num_places): 
@@ -162,6 +169,7 @@ def SEIR_hierarchical(data = None,
         death0, death = death[:,0], death[:,1:]
     else:
         obs0, obs = None, None
+        death0, death = None, None
     
     '''
     Run model for each place

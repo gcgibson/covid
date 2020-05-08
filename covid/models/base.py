@@ -108,8 +108,64 @@ class Model():
         if self.mcmc_samples is None:
             raise RuntimeError("run inference first")
 
-        predictive = Predictive(self, posterior_samples=self.mcmc_samples)
+            
+        post_median = np.median(self.mcmc_samples['beta'] ,axis=0).reshape(1,-1)
+        self.mcmc_samples['beta'] =np.repeat(post_median,100,axis=0)
+        
+        post_median = np.median(self.mcmc_samples['mean_z'] ,axis=0).reshape(1,-1)
+        self.mcmc_samples['mean_z'] =np.repeat(post_median,100,axis=0)
+        
+        post_median = np.median(self.mcmc_samples['mean_y'] ,axis=0).reshape(1,-1)
+        self.mcmc_samples['mean_y'] =np.repeat(post_median,100,axis=0)
+        
+        post_median = np.median(self.mcmc_samples['beta0'] ,axis=0).reshape(-1)
+        self.mcmc_samples['beta0'] =np.repeat(post_median,100,axis=0)
+        
+        
+        post_median = np.median(self.mcmc_samples['det_rate_rw'] ,axis=0).reshape(1,-1)
+        self.mcmc_samples['det_rate_rw'] =np.repeat(post_median,100,axis=0)
+        
+        print (self.mcmc_samples['x'].shape)
+        post_median = np.median(self.mcmc_samples['x'] ,axis=0).reshape(1,-1,7)
+        self.mcmc_samples['x'] =np.repeat(post_median,100,axis=0)
+        
+        post_median = np.median(self.mcmc_samples['x0'] ,axis=0).reshape(1,7)
+            self.mcmc_samples['x0'] =np.repeat(post_median,100,axis=0)
+        
+        print (self.mcmc_samples.keys())
+        post_median = np.median(self.mcmc_samples['I0'] ,axis=0).reshape(-1)
+        self.mcmc_samples['I0'] =np.repeat(post_median,100)
+        
+        post_median = np.median(self.mcmc_samples['E0'] ,axis=0).reshape(-1)
+        self.mcmc_samples['E0'] =np.repeat(post_median,100)
+        
+        post_median = np.median(self.mcmc_samples['H0'] ,axis=0).reshape(-1)
+        self.mcmc_samples['H0'] =np.repeat(post_median,100)
+        
+        post_median = np.median(self.mcmc_samples['D0'] ,axis=0).reshape(-1)
+        self.mcmc_samples['D0'] =np.repeat(post_median,100)
+        
+        post_median = np.median(self.mcmc_samples['death_prob'] ,axis=0).reshape(-1)
+        self.mcmc_samples['death_prob'] =np.repeat(post_median,100)
+        
+        post_median = np.median(self.mcmc_samples['death_rate'] ,axis=0).reshape(-1)
+        self.mcmc_samples['death_rate'] =np.repeat(post_median,100)
+        
+        post_median = np.median(self.mcmc_samples['mean_y0'] ,axis=0).reshape(-1)
+        self.mcmc_samples['mean_y0'] =np.repeat(post_median,100)
 
+        post_median = np.median(self.mcmc_samples['mean_z0'] ,axis=0).reshape(-1)
+        self.mcmc_samples['mean_z0'] =np.repeat(post_median,100)
+        
+        post_median = np.median(self.mcmc_samples['det_prob_d'] ,axis=0).reshape(-1)
+        self.mcmc_samples['det_prob_d'] =np.repeat(post_median,100)
+        
+        post_median = np.median(self.mcmc_samples['det_prob'] ,axis=0).reshape(-1)
+        self.mcmc_samples['det_prob'] = np.repeat(post_median,100)
+        print (self.mcmc_samples)
+        #self.mcmc_samples['beta'] = np.repeat(post_median,(100,43)).reshape(100,43)
+        predictive = Predictive(self, posterior_samples=self.mcmc_samples)
+        print (predictive)
         args = dict(self.args, **args)
         return predictive(rng_key, **self.obs, **args)
         

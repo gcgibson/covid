@@ -154,6 +154,9 @@ class SEIRD(SEIRDBase):
             z = observe("z" + suffix, x[:,5], det_prob_d, det_noise_scale, obs = death)
 
         return beta,det_prob_rw, x, y, z
+    
+    
+
 
 
         

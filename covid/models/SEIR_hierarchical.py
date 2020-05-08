@@ -87,7 +87,7 @@ def SEIR_hierarchical(data = None,
     '''Generate R0'''
     ## TODO: forecasting with splines not yet supported b/c patsy will not evaluate
     ## splines outside of the outermost knots. Look into workaround/fix for this
-    R0_glm = GLM("1 + C(state, OneHot)  + shelter_in_place  +standardize(popdensity) ", 
+    R0_glm = GLM("1 + C(state, OneHot)  + shelter_in_place +standardize(popdensity) ", 
                  data, 
                  log_link,
                  partial(Gamma, var=0.1),

@@ -117,7 +117,10 @@ def plot_R0(mcmc_samples, start):
     fig = plt.figure(figsize=(5,3))
     
     # Compute average R0 over time
-    gamma = mcmc_samples['gamma'][:,None]
+    if 'gamma' in mcmc_samples.keys():
+        gamma = mcmc_samples['gamma'][:,None]
+    else:
+        gamma = .5
     beta = mcmc_samples['beta']
     t = pd.date_range(start=start, periods=beta.shape[1], freq='D')
     R0 = beta/gamma
@@ -135,11 +138,14 @@ def plot_R0(mcmc_samples, start):
 
 
 
+
+
 """
 ************************************************************
 Running
 ************************************************************
 """
+
 
 def run_place(data, 
               place, 
